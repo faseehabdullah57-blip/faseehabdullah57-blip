@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="240" height="151" viewBox="0 0 240 151" role="img" aria-labelledby="activity-title activity-desc">
 <title id="activity-title">Public commit activity</title>
-<desc id="activity-desc">Public commits on default branches from 2026-08-30 to 2026-11-21: 9 total.</desc>
+<desc id="activity-desc">Public commits on default branches from 2026-08-30 to 2026-11-21: 8 total.</desc>
 <rect x="0.5" y="0.5" width="239" height="150" rx="6" fill="#ffffff" stroke="#d0d7de"/>
 <text x="42" y="16" font-size="9" fill="#57606a" font-family="Arial, sans-serif">Aug</text>
 <text x="56" y="16" font-size="9" fill="#57606a" font-family="Arial, sans-serif">Sep</text>
@@ -43,7 +43,7 @@
 <rect x="140" y="54" width="11" height="11" rx="2" fill="#ebedf0"><title>2026-10-20: 0 commits</title></rect>
 <rect x="154" y="54" width="11" height="11" rx="2" fill="#ebedf0"><title>2026-10-27: 0 commits</title></rect>
 <rect x="168" y="54" width="11" height="11" rx="2" fill="#ebedf0"><title>2026-11-03: 0 commits</title></rect>
-<rect x="182" y="54" width="11" height="11" rx="2" fill="#40c463"><title>2026-11-10: 3 commits</title></rect>
+<rect x="182" y="54" width="11" height="11" rx="2" fill="#40c463"><title>2026-11-10: 2 commits</title></rect>
 <rect x="196" y="54" width="11" height="11" rx="2" fill="#ebedf0"><title>2026-11-17: 0 commits</title></rect>
 <rect x="42" y="68" width="11" height="11" rx="2" fill="#ebedf0"><title>2026-09-02: 0 commits</title></rect>
 <rect x="56" y="68" width="11" height="11" rx="2" fill="#ebedf0"><title>2026-09-09: 0 commits</title></rect>
@@ -100,5 +100,5 @@
 <rect x="110" y="130" width="11" height="11" rx="2" fill="#30a14e"/>
 <rect x="124" y="130" width="11" height="11" rx="2" fill="#216e39"/>
 <text x="140" y="139" font-size="9" fill="#57606a" font-family="Arial, sans-serif">More</text>
-<text x="228" y="139" font-size="9" fill="#57606a" text-anchor="end" font-family="Arial, sans-serif">9 commits</text>
+<text x="228" y="139" font-size="9" fill="#57606a" text-anchor="end" font-family="Arial, sans-serif">8 commits</text>
 </svg>
