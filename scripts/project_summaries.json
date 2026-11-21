@@ -1,0 +1,10 @@
+{
+  "leadflow-crm": "A FastAPI foundation for an AI-assisted CRM: API scaffolding for lead capture, qualification, and follow-up workflows. Early-stage.",
+  "ghl-data-migration-tool": "A config-driven migration pipeline that maps legacy CSV exports, validates contacts, opportunities, and notes, and loads them into GoHighLevel API v2 with row-level error reports.",
+  "ghl-lead-scoring-service": "A serverless, event-driven lead scoring engine with configurable rules, inactivity decay, webhook idempotency, and speed-to-lead task creation.",
+  "ghl-webhook-processor.": "An Express service that authenticates and normalizes GoHighLevel webhooks, acknowledges fast, then forwards events with retries, a dead-letter queue, and replay support.",
+  "ghl-snapshot-validator": "A CLI that audits GoHighLevel sub-account configuration against a canonical blueprint, detects drift across fields, pipelines, and workflows, and can auto-fix missing resources.",
+  "pddg-cybersecurity": "A TypeScript content and site build for Pinnacle Digital Defense Group, a cybersecurity services brand.",
+  "Ai-checker": "A static HTML/CSS/JavaScript portfolio site for Faseeh Digital's SEO, social media, and advertising services.",
+  "fadigital.github.io": "A single-page GitHub Pages site for Faseeh Digital's services."
+}

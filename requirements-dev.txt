@@ -1,0 +1,2 @@
+# Test-only dependency used to validate the GitHub Actions workflow YAML.
+PyYAML>=6.0,<7

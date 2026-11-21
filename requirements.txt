@@ -1,0 +1,2 @@
+# Runtime dependencies: none.
+# The profile updater uses only the Python standard library.
