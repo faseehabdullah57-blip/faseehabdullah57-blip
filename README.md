@@ -168,9 +168,9 @@ _Excludes this profile repository. Signals are derived from default branches._
 
 <!-- commit-activity:start -->
 
-![Public commit activity over the last 12 weeks](assets/commit-activity.svg?v=69bc9ade)
+![Public commit activity over the last 12 weeks](assets/commit-activity.svg?v=52602d79)
 
-_Public commits on default branches, 2026-08-30 through 2026-11-21 (8 commits; source: repository statistics)._
+_Public commits on default branches, 2026-09-06 through 2026-11-28 (8 commits; source: repository statistics)._
 
 <!-- commit-activity:end -->
 
