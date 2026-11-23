@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="activity-title activity-desc">
 <title id="activity-title">Public commit activity</title>
-<desc id="activity-desc">Public commits on default branches from 2026-09-06 to 2026-11-23: 9 total.</desc>
+<desc id="activity-desc">Public commits on default branches from 2026-09-06 to 2026-11-23: 8 total.</desc>
 <defs>
 <linearGradient id="activity-accent" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8B5CF6"/><stop offset="0.55" stop-color="#3B82F6"/><stop offset="1" stop-color="#22D3EE"/></linearGradient>
 <radialGradient id="activity-glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#8B5CF6" stop-opacity="0.3"/><stop offset="1" stop-color="#8B5CF6" stop-opacity="0"/></radialGradient>
@@ -52,7 +52,7 @@
 <rect x="238" y="158" width="18" height="18" rx="4" fill="#1F2937"><title>2026-10-20: 0 commits</title></rect>
 <rect x="261" y="158" width="18" height="18" rx="4" fill="#1F2937"><title>2026-10-27: 0 commits</title></rect>
 <rect x="284" y="158" width="18" height="18" rx="4" fill="#1F2937"><title>2026-11-03: 0 commits</title></rect>
-<rect x="307" y="158" width="18" height="18" rx="4" fill="#6D28D9"><title>2026-11-10: 3 commits</title></rect>
+<rect x="307" y="158" width="18" height="18" rx="4" fill="#6D28D9"><title>2026-11-10: 2 commits</title></rect>
 <rect x="330" y="158" width="18" height="18" rx="4" fill="#1F2937"><title>2026-11-17: 0 commits</title></rect>
 <rect x="353" y="158" width="18" height="18" rx="4" fill="#1F2937"><title>2026-11-24: 0 commits</title></rect>
 <rect x="100" y="181" width="18" height="18" rx="4" fill="#1F2937"><title>2026-09-09: 0 commits</title></rect>
@@ -104,7 +104,7 @@
 <rect x="330" y="250" width="18" height="18" rx="4" fill="#1F2937"><title>2026-11-21: 0 commits</title></rect>
 <rect x="353" y="250" width="18" height="18" rx="4" fill="#1F2937"><title>2026-11-28: 0 commits</title></rect>
 <line x1="500" y1="100" x2="500" y2="272" stroke="#1F2937"/>
-<text x="540" y="186" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="64" font-weight="700" fill="#F8FAFC">9</text>
+<text x="540" y="186" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="64" font-weight="700" fill="#F8FAFC">8</text>
 <text x="544" y="214" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" letter-spacing="1.8" fill="#94A3B8">PUBLIC COMMITS</text>
 <text x="544" y="242" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" fill="#CBD5E1">2026-09-06 — 2026-11-23</text>
 <text x="544" y="262" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#64748B">Derived from default branches across public repositories.</text>
@@ -115,5 +115,5 @@
 <rect x="630" y="278" width="10" height="10" rx="2" fill="#3B82F6"/>
 <rect x="646" y="278" width="10" height="10" rx="2" fill="#22D3EE"/>
 <text x="668" y="288" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#94A3B8">MORE</text>
-<text x="1160" y="288" text-anchor="end" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#64748B">9 commits in range</text>
+<text x="1160" y="288" text-anchor="end" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#64748B">8 commits in range</text>
 </svg>

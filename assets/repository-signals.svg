@@ -34,14 +34,14 @@
 <text x="60" y="248" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" letter-spacing="1.6" fill="#C4B5FD">LANGUAGE SHARE BY BYTES</text>
 <text x="60" y="282" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" fill="#CBD5E1">Python</text>
 <rect x="160" y="274" width="480" height="10" rx="5" fill="#1F2937"/>
-<rect x="160" y="274" width="317" height="10" rx="5" fill="url(#bar-grad)"/>
+<rect x="160" y="274" width="318" height="10" rx="5" fill="url(#bar-grad)"/>
 <text x="660" y="283" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#CBD5E1">66%</text>
 <text x="720" y="283" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#64748B">355.7 KB</text>
 <text x="60" y="306" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" fill="#CBD5E1">JavaScript</text>
 <rect x="160" y="298" width="480" height="10" rx="5" fill="#1F2937"/>
 <rect x="160" y="298" width="75" height="10" rx="5" fill="url(#bar-grad)"/>
 <text x="660" y="307" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#CBD5E1">16%</text>
-<text x="720" y="307" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#64748B">84.3 KB</text>
+<text x="720" y="307" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#64748B">84.0 KB</text>
 <text x="60" y="330" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" fill="#CBD5E1">TypeScript</text>
 <rect x="160" y="322" width="480" height="10" rx="5" fill="#1F2937"/>
 <rect x="160" y="322" width="52" height="10" rx="5" fill="url(#bar-grad)"/>
@@ -51,18 +51,18 @@
 <rect x="160" y="346" width="480" height="10" rx="5" fill="#1F2937"/>
 <rect x="160" y="346" width="18" height="10" rx="5" fill="url(#bar-grad)"/>
 <text x="660" y="355" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#CBD5E1">4%</text>
-<text x="720" y="355" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#64748B">20.6 KB</text>
+<text x="720" y="355" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#64748B">20.1 KB</text>
 <text x="60" y="378" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" fill="#CBD5E1">CSS</text>
 <rect x="160" y="370" width="480" height="10" rx="5" fill="#1F2937"/>
 <rect x="160" y="370" width="14" height="10" rx="5" fill="url(#bar-grad)"/>
 <text x="660" y="379" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#CBD5E1">3%</text>
-<text x="720" y="379" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#64748B">16.7 KB</text>
+<text x="720" y="379" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#64748B">15.8 KB</text>
 <rect x="780" y="218" width="380" height="188" rx="14" fill="#0F172A" fill-opacity="0.7" stroke="#1F2937"/>
 <text x="800" y="248" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" letter-spacing="1.6" fill="#C4B5FD">LATEST PUBLIC COMMIT</text>
 <text x="800" y="292" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#F8FAFC">2026-11-13</text>
 <line x1="800" y1="312" x2="1140" y2="312" stroke="#1F2937"/>
 <text x="800" y="340" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" fill="#CBD5E1">8 public repositories</text>
-<text x="800" y="362" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" fill="#94A3B8">537.0 KB of language data measured</text>
+<text x="800" y="362" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" fill="#94A3B8">535.3 KB of language data measured</text>
 <text x="800" y="384" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#64748B">Excludes this profile repository.</text>
 <text x="40" y="434" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="9.5" fill="#64748B">Generated from public repository metadata. No inferred or estimated values.</text>
 </svg>

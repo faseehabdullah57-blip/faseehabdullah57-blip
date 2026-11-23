@@ -155,7 +155,7 @@ _No published releases across public repositories yet. Tagged releases will appe
 
 <!-- repository-signals:start -->
 
-![Repository signals: 8 public repositories; test suites detected in 4; CI workflows detected in 1; 0 repositories with published releases.](assets/repository-signals.svg?v=b447ae32)
+![Repository signals: 8 public repositories; test suites detected in 4; CI workflows detected in 1; 0 repositories with published releases.](assets/repository-signals.svg?v=51ed9356)
 
 <details>
 <summary>Raw signal values</summary>
@@ -182,9 +182,9 @@ _Excludes this profile repository. Signals are derived from default branches._
 
 <!-- commit-activity:start -->
 
-![Public commit activity over the last 12 weeks](assets/commit-activity.svg?v=a1b6631e)
+![Public commit activity over the last 12 weeks](assets/commit-activity.svg?v=52a73f75)
 
-_Public commits on default branches, 2026-09-06 through 2026-11-23 (9 commits; source: repository statistics)._
+_Public commits on default branches, 2026-09-06 through 2026-11-23 (8 commits; source: repository statistics)._
 
 <!-- commit-activity:end -->
 
