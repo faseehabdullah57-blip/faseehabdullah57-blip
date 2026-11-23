@@ -6,10 +6,12 @@ missing section markers, unpinned actions, unsafe triggers, and malformed YAML.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import sys
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import yaml
@@ -54,6 +56,7 @@ class ReadmeContractTests(unittest.TestCase):
             "## Engineering focus",
             "## Technical range",
             "## Selected engineering work",
+            "## Architecture",
             "## Current focus",
             "## Contact",
         ):
@@ -131,12 +134,82 @@ class WorkflowContractTests(unittest.TestCase):
 
     def test_commit_step_only_stages_generated_files(self) -> None:
         self.assertIn("git add README.md", self.text)
+        self.assertIn("assets/featured-projects.svg", self.text)
+        self.assertIn("assets/repository-signals.svg", self.text)
         self.assertIn("assets/commit-activity.svg", self.text)
         self.assertIn("git diff --cached --quiet", self.text)
         self.assertIn("[skip ci]", self.text)
 
     def test_no_pull_request_target(self) -> None:
         self.assertNotIn("pull_request_target", self.text)
+
+
+class AssetContractTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.readme = README_PATH.read_text(encoding="utf-8")
+        self.svg_paths = sorted((ROOT / "assets").glob("*.svg"))
+
+    def test_assets_directory_contains_expected_design_assets(self) -> None:
+        names = {path.name for path in self.svg_paths}
+        for name in (
+            "hero.svg",
+            "tech-stack.svg",
+            "architecture.svg",
+            "reliability-flow.svg",
+            "featured-projects.svg",
+            "repository-signals.svg",
+            "commit-activity.svg",
+        ):
+            self.assertIn(name, names)
+
+    def test_every_svg_is_valid_and_github_safe(self) -> None:
+        for path in self.svg_paths:
+            text = path.read_text(encoding="utf-8")
+            root = ET.fromstring(text)
+            self.assertTrue(root.tag.endswith("svg"), f"{path} is not an SVG root")
+            self.assertIn("viewBox", root.attrib, f"{path} has no viewBox")
+            self.assertIn("role", root.attrib, f"{path} has no accessible role")
+            self.assertIn("<title", text, f"{path} has no title")
+            for forbidden in ("<script", "foreignObject", "@import", "url(http"):
+                self.assertNotIn(forbidden, text, f"{path} contains {forbidden}")
+
+    def test_every_svg_uses_the_dark_palette(self) -> None:
+        for path in self.svg_paths:
+            self.assertIn("#0B0F19", path.read_text(encoding="utf-8"), path.name)
+
+    def test_readme_references_only_existing_local_assets(self) -> None:
+        paths = set(re.findall(r"assets/[A-Za-z0-9._/-]+\.svg", self.readme))
+        self.assertTrue(paths)
+        for relative in paths:
+            self.assertTrue((ROOT / relative).exists(), f"missing asset: {relative}")
+
+    def test_asset_cache_busters_match_file_hashes(self) -> None:
+        pairs = re.findall(
+            r"(assets/[A-Za-z0-9._/-]+\.svg)\?v=([0-9a-f]{8})", self.readme
+        )
+        self.assertTrue(pairs)
+        for relative, digest in pairs:
+            actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()[:8]
+            self.assertEqual(
+                actual,
+                digest,
+                f"stale cache-buster for {relative}: README has {digest}, file has {actual}",
+            )
+
+    def test_readme_has_no_inline_css(self) -> None:
+        self.assertNotIn("style=", self.readme)
+
+    def test_readme_images_have_alt_text(self) -> None:
+        for alt in re.findall(r"!\[([^\]]*)\]", self.readme):
+            self.assertTrue(alt.strip(), "Markdown image is missing alt text")
+        for alt in re.findall(r"<img[^>]*alt=\"([^\"]*)\"", self.readme):
+            self.assertTrue(alt.strip(), "HTML image is missing alt text")
+
+    def test_readme_embeds_hero_and_architecture(self) -> None:
+        self.assertIn("assets/hero.svg", self.readme)
+        self.assertIn("assets/tech-stack.svg", self.readme)
+        self.assertIn("assets/architecture.svg", self.readme)
+        self.assertIn("assets/reliability-flow.svg", self.readme)
 
 
 class SummariesContractTests(unittest.TestCase):

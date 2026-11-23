@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="featured-title featured-desc">
+<title id="featured-title">Featured engineering projects</title>
+<desc id="featured-desc">Project cards ranked from public repository signals: tests, CI, Docker, documentation, recency, and repository size.</desc>
+<defs>
+<linearGradient id="card-accent" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8B5CF6"/><stop offset="0.55" stop-color="#3B82F6"/><stop offset="1" stop-color="#22D3EE"/></linearGradient>
+<radialGradient id="card-glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#8B5CF6" stop-opacity="0.28"/><stop offset="1" stop-color="#8B5CF6" stop-opacity="0"/></radialGradient>
+<pattern id="card-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1F2937" stroke-width="1" opacity="0.38"/></pattern>
+</defs>
+<rect width="1200" height="620" fill="#0B0F19"/>
+<rect width="1200" height="620" fill="url(#card-grid)"/>
+<ellipse cx="1000" cy="20" rx="330" ry="210" fill="url(#card-glow)"/>
+<rect x="0" y="0" width="1200" height="3" fill="url(#card-accent)"/>
+<text x="20" y="40" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" letter-spacing="2.4" fill="#C4B5FD">SELECTED ENGINEERING WORK</text>
+<text x="20" y="72" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="24" font-weight="600" fill="#F8FAFC">Systems built for reliability</text>
+<text x="1180" y="40" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" letter-spacing="1.6" fill="#64748B">RANKED BY REPOSITORY SIGNALS</text>
+<rect x="20" y="100" width="570" height="240" rx="16" fill="#111827" stroke="#1F2937"/>
+<rect x="20" y="100" width="570" height="3" rx="1.5" fill="url(#card-accent)"/>
+<text x="560" y="134" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#64748B">01</text>
+<text x="48" y="154" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="21" font-weight="600" fill="#F8FAFC">ghl-snapshot-validator</text>
+<text x="48" y="188" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#CBD5E1"><tspan x="48" dy="0">A CLI that audits GoHighLevel sub-account configuration against a</tspan><tspan x="48" dy="18">canonical blueprint, detects drift across fields, pipelines, and</tspan><tspan x="48" dy="18">workflows, and can auto-fix missing resources.</tspan></text>
+<line x1="48" y1="248" x2="562" y2="248" stroke="#1F2937"/>
+<text x="48" y="272" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#94A3B8">Python · tests · CI · updated 2026-11-13</text>
+<text x="48" y="300" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10.5" fill="#64748B">Latest: Complete GoHighLevel snapshot configuration validator CLI with multi-locati...</text>
+<rect x="610" y="100" width="570" height="240" rx="16" fill="#111827" stroke="#1F2937"/>
+<rect x="610" y="100" width="570" height="3" rx="1.5" fill="url(#card-accent)"/>
+<text x="1150" y="134" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#64748B">02</text>
+<text x="638" y="154" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="21" font-weight="600" fill="#F8FAFC">ghl-webhook-processor.</text>
+<text x="638" y="188" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#CBD5E1"><tspan x="638" dy="0">An Express service that authenticates and normalizes GoHighLevel webhooks,</tspan><tspan x="638" dy="18">acknowledges fast, then forwards events with retries, a dead-letter queue,</tspan><tspan x="638" dy="18">and replay support.</tspan></text>
+<line x1="638" y1="248" x2="1152" y2="248" stroke="#1F2937"/>
+<text x="638" y="272" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#94A3B8">JavaScript · tests · Docker · updated 2026-11-13</text>
+<text x="638" y="300" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10.5" fill="#64748B">Latest: Complete GoHighLevel webhook processor with DLQ, replay API, and Docker (af...</text>
+<rect x="20" y="360" width="570" height="240" rx="16" fill="#111827" stroke="#1F2937"/>
+<rect x="20" y="360" width="570" height="3" rx="1.5" fill="url(#card-accent)"/>
+<text x="560" y="394" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#64748B">03</text>
+<text x="48" y="414" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="21" font-weight="600" fill="#F8FAFC">ghl-data-migration-tool</text>
+<text x="48" y="448" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#CBD5E1"><tspan x="48" dy="0">A config-driven migration pipeline that maps legacy CSV exports, validates</tspan><tspan x="48" dy="18">contacts, opportunities, and notes, and loads them into GoHighLevel API v2</tspan><tspan x="48" dy="18">with row-level error reports.</tspan></text>
+<line x1="48" y1="508" x2="562" y2="508" stroke="#1F2937"/>
+<text x="48" y="532" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#94A3B8">Python · tests · Docker · updated 2026-11-13</text>
+<text x="48" y="560" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10.5" fill="#64748B">Latest: feat: add Opportunities &amp; Notes migration, PII gitignore rules, and Docker...</text>
+<rect x="610" y="360" width="570" height="240" rx="16" fill="#111827" stroke="#1F2937"/>
+<rect x="610" y="360" width="570" height="3" rx="1.5" fill="url(#card-accent)"/>
+<text x="1150" y="394" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#64748B">04</text>
+<text x="638" y="414" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="21" font-weight="600" fill="#F8FAFC">ghl-lead-scoring-service</text>
+<text x="638" y="448" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#CBD5E1"><tspan x="638" dy="0">A serverless, event-driven lead scoring engine with configurable rules,</tspan><tspan x="638" dy="18">inactivity decay, webhook idempotency, and speed-to-lead task creation.</tspan></text>
+<line x1="638" y1="508" x2="1152" y2="508" stroke="#1F2937"/>
+<text x="638" y="532" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#94A3B8">Python · tests · updated 2026-11-13</text>
+<text x="638" y="560" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10.5" fill="#64748B">Latest: feat: add inactivity time-decay, webhook idempotency, and speed-to-lead tas...</text>
+</svg>

@@ -813,54 +813,260 @@ def _format_count(count: int, singular: str, plural: str | None = None) -> str:
     return f"{count} {word}"
 
 
+SVG_SANS = "Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif"
+SVG_MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+SVG_BG = "#0B0F19"
+SVG_PANEL = "#111827"
+SVG_PANEL_DEEP = "#0F172A"
+SVG_STROKE = "#1F2937"
+SVG_TEXT = "#F8FAFC"
+SVG_SOFT = "#CBD5E1"
+SVG_MUTED = "#94A3B8"
+SVG_FAINT = "#64748B"
+SVG_PURPLE = "#8B5CF6"
+SVG_BLUE = "#3B82F6"
+SVG_CYAN = "#22D3EE"
+SVG_PURPLE_LIGHT = "#C4B5FD"
+
+
+def escape_xml(value: Any, limit: int | None = None) -> str:
+    """Escape untrusted text for SVG text nodes and attributes."""
+    return html.escape(sanitize_inline(value, limit), quote=True)
+
+
+def wrap_text(value: Any, max_chars: int, max_lines: int) -> list[str]:
+    """Word-wrap text for an SVG card without overflowing its column."""
+    text = sanitize_inline(value, limit=None)
+    if not text:
+        return []
+
+    words = text.split()
+    lines: list[str] = []
+    current = ""
+    for word in words:
+        candidate = f"{current} {word}".strip()
+        if len(candidate) <= max_chars:
+            current = candidate
+            continue
+        if current:
+            lines.append(current)
+        current = word
+        if len(lines) >= max_lines:
+            break
+
+    if current and len(lines) < max_lines:
+        lines.append(current)
+    if not lines:
+        lines = [text]
+
+    lines = [
+        line if len(line) <= max_chars else line[:max_chars].rstrip()
+        for line in lines
+    ]
+    joined = " ".join(lines)
+    if len(joined) < len(text):
+        lines = lines[:max_lines]
+        last = lines[-1]
+        if len(last) > max_chars - 3:
+            last = last[: max_chars - 3].rstrip()
+        lines[-1] = last + "..."
+    return lines[:max_lines]
+
+
+def _svg_text_lines(
+    x: int,
+    y: int,
+    lines: Sequence[str],
+    line_height: int = 18,
+    font_size: int = 13,
+    fill: str = SVG_SOFT,
+    weight: int = 400,
+    family: str = SVG_SANS,
+) -> str:
+    tspans = "".join(
+        f'<tspan x="{x}" dy="{0 if index == 0 else line_height}">'
+        f"{escape_xml(line)}</tspan>"
+        for index, line in enumerate(lines)
+    )
+    return (
+        f'<text x="{x}" y="{y}" font-family="{family}" font-size="{font_size}" '
+        f'font-weight="{weight}" fill="{fill}">{tspans}</text>'
+    )
+
+
+def format_bytes(value: int) -> str:
+    if value >= 1_000_000:
+        return f"{value / 1_000_000:.1f} MB"
+    if value >= 1_000:
+        return f"{value / 1_000:.1f} KB"
+    return f"{value} B"
+
+
+def language_breakdown(
+    repos: Sequence[Repo], limit: int | None = None
+) -> tuple[int, list[tuple[str, int, float]]]:
+    totals: Counter[str] = Counter()
+    for repo in repos:
+        totals.update(repo.languages)
+    total = sum(totals.values())
+    rows = [
+        (language, amount, (amount / total if total else 0.0))
+        for language, amount in totals.most_common(limit)
+    ]
+    return total, rows
+
+
 # ---------------------------------------------------------------------------
 # Section renderers (pure functions, tested without network access)
 # ---------------------------------------------------------------------------
 
 
-def render_featured(
-    featured: Sequence[Repo], summaries: dict[str, str], limit: int = FEATURED_LIMIT
-) -> str:
-    if not featured:
-        return "_No public repositories discovered yet._"
+def render_featured_svg(
+    featured: Sequence[Repo], summaries: dict[str, str]
+) -> str | None:
+    cards = list(featured)[:FEATURED_LIMIT]
+    if not cards:
+        return None
 
-    lines: list[str] = []
-    for repo in list(featured)[:limit]:
-        signals: list[str] = []
+    rows = (len(cards) + 1) // 2
+    height = 100 + (rows - 1) * 260 + 240 + 20
+    parts = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="{height}" '
+        f'viewBox="0 0 1200 {height}" role="img" '
+        'aria-labelledby="featured-title featured-desc">',
+        '<title id="featured-title">Featured engineering projects</title>',
+        (
+            '<desc id="featured-desc">Project cards ranked from public repository '
+            "signals: tests, CI, Docker, documentation, recency, and repository size.</desc>"
+        ),
+        "<defs>",
+        '<linearGradient id="card-accent" x1="0" y1="0" x2="1" y2="0">'
+        f'<stop offset="0" stop-color="{SVG_PURPLE}"/>'
+        f'<stop offset="0.55" stop-color="{SVG_BLUE}"/>'
+        f'<stop offset="1" stop-color="{SVG_CYAN}"/></linearGradient>',
+        '<radialGradient id="card-glow" cx="50%" cy="50%" r="50%">'
+        f'<stop offset="0" stop-color="{SVG_PURPLE}" stop-opacity="0.28"/>'
+        f'<stop offset="1" stop-color="{SVG_PURPLE}" stop-opacity="0"/></radialGradient>',
+        '<pattern id="card-grid" width="40" height="40" patternUnits="userSpaceOnUse">'
+        f'<path d="M 40 0 L 0 0 0 40" fill="none" stroke="{SVG_STROKE}" '
+        'stroke-width="1" opacity="0.38"/></pattern>',
+        "</defs>",
+        f'<rect width="1200" height="{height}" fill="{SVG_BG}"/>',
+        f'<rect width="1200" height="{height}" fill="url(#card-grid)"/>',
+        '<ellipse cx="1000" cy="20" rx="330" ry="210" fill="url(#card-glow)"/>',
+        '<rect x="0" y="0" width="1200" height="3" fill="url(#card-accent)"/>',
+        f'<text x="20" y="40" font-family="{SVG_MONO}" font-size="10" '
+        f'letter-spacing="2.4" fill="{SVG_PURPLE_LIGHT}">SELECTED ENGINEERING WORK</text>',
+        f'<text x="20" y="72" font-family="{SVG_SANS}" font-size="24" '
+        f'font-weight="600" fill="{SVG_TEXT}">Systems built for reliability</text>',
+        f'<text x="1180" y="40" text-anchor="end" font-family="{SVG_MONO}" '
+        f'font-size="10" letter-spacing="1.6" fill="{SVG_FAINT}">'
+        "RANKED BY REPOSITORY SIGNALS</text>",
+    ]
+
+    for index, repo in enumerate(cards):
+        column = index % 2
+        row = index // 2
+        x = 20 + column * 590
+        y = 100 + row * 260
+        name = wrap_text(repo.name, 32, 1)[0]
+        summary = wrap_text(repo_summary(repo, summaries), 74, 3)
+        signals = []
         if repo.language:
-            signals.append(f"`{escape_markdown(repo.language, 40)}`")
+            signals.append(repo.language)
         if repo.has_tests:
             signals.append("tests")
         if repo.has_ci:
             signals.append("CI")
         if repo.has_docker:
             signals.append("Docker")
-        if repo.stars:
-            signals.append(f"{repo.stars} star{'s' if repo.stars != 1 else ''}")
         updated = format_date(repo.pushed_at)
         if updated != "unknown":
             signals.append(f"updated {updated}")
-
-        lines.append(f"### [{escape_markdown(repo.name, 80)}]({repo.url})")
-        lines.append("")
-        lines.append(escape_markdown(repo_summary(repo, summaries), 240))
-        lines.append("")
-        lines.append(" · ".join(signals) if signals else "_No repository signals available._")
-
+        signal_text = "  ·  ".join(signals) if signals else "No repository signals available."
         latest = repo.latest_commit
+        latest_text = ""
         if latest:
-            lines.append("")
-            lines.append(
-                f"Latest: {escape_markdown(latest.message or 'No commit message', 120)} "
-                f"(`{latest.short_sha}`)"
+            latest_text = (
+                "Latest: "
+                + (latest.message or "No commit message")
+                + f"  ({latest.short_sha})"
             )
-        lines.append("")
 
-    lines.append(
+        parts.extend(
+            [
+                f'<rect x="{x}" y="{y}" width="570" height="240" rx="16" '
+                f'fill="{SVG_PANEL}" stroke="{SVG_STROKE}"/>',
+                f'<rect x="{x}" y="{y}" width="570" height="3" rx="1.5" '
+                'fill="url(#card-accent)"/>',
+                f'<text x="{x + 540}" y="{y + 34}" text-anchor="end" '
+                f'font-family="{SVG_MONO}" font-size="10" fill="{SVG_FAINT}">'
+                f"{index + 1:02d}</text>",
+                f'<text x="{x + 28}" y="{y + 54}" font-family="{SVG_SANS}" '
+                f'font-size="21" font-weight="600" fill="{SVG_TEXT}">'
+                f"{escape_xml(name)}</text>",
+                _svg_text_lines(
+                    x + 28,
+                    y + 88,
+                    summary,
+                    line_height=18,
+                    font_size=13,
+                    fill=SVG_SOFT,
+                ),
+                f'<line x1="{x + 28}" y1="{y + 148}" x2="{x + 542}" y2="{y + 148}" '
+                f'stroke="{SVG_STROKE}"/>',
+                f'<text x="{x + 28}" y="{y + 172}" font-family="{SVG_MONO}" '
+                f'font-size="10.5" fill="{SVG_MUTED}">{escape_xml(signal_text, 90)}</text>',
+            ]
+        )
+        if latest_text:
+            parts.append(
+                f'<text x="{x + 28}" y="{y + 200}" font-family="{SVG_SANS}" '
+                f'font-size="10.5" fill="{SVG_FAINT}">'
+                f"{escape_xml(latest_text, 86)}</text>"
+            )
+
+    parts.append("</svg>")
+    return "\n".join(parts) + "\n"
+
+
+def render_featured(
+    featured: Sequence[Repo],
+    summaries: dict[str, str],
+    image_path: str = "assets/featured-projects.svg",
+    limit: int = FEATURED_LIMIT,
+) -> tuple[str, str | None]:
+    cards = list(featured)[:limit]
+    if not cards:
+        return "_No public repositories discovered yet._", None
+
+    svg = render_featured_svg(cards, summaries)
+    if svg is None:
+        return "_No public repositories discovered yet._", None
+
+    digest = hashlib.sha256(svg.encode("utf-8")).hexdigest()[:8]
+    separator = "&" if "?" in image_path else "?"
+    image_url = f"{image_path}{separator}v={digest}"
+    names = ", ".join(sanitize_inline(repo.name, 80) for repo in cards)
+    links = " · ".join(
+        f"[{escape_markdown(repo.name, 80)}]({repo.url})" for repo in cards
+    )
+    details = ["<details>", "<summary>Project details</summary>", ""]
+    for repo in cards:
+        details.append(
+            f"- **[{escape_markdown(repo.name, 80)}]({repo.url})** — "
+            f"{escape_markdown(repo_summary(repo, summaries), 220)}"
+        )
+    details.extend(["", "</details>"])
+    markdown = (
+        f"![Featured engineering projects: {names}]({image_url})\n\n"
+        f"{links}\n\n"
         "_Ranking: recency, stars/forks, description, tests, CI, Docker, releases, "
         "documentation, and repository size. Ties break by stars, then most recent push._"
+        "\n\n"
+        + "\n".join(details)
     )
-    return "\n".join(lines).strip()
+    return markdown, svg
 
 
 def render_project_index(
@@ -930,7 +1136,7 @@ def render_releases(repos: Sequence[Repo], limit: int = RELEASE_LIMIT) -> str:
     return "\n".join(lines)
 
 
-def render_repository_signals(repos: Sequence[Repo]) -> str:
+def render_repository_signals_table(repos: Sequence[Repo]) -> str:
     if not repos:
         return "_Repository signals are unavailable._"
 
@@ -943,14 +1149,11 @@ def render_repository_signals(repos: Sequence[Repo]) -> str:
         )
     )
 
-    byte_totals: Counter[str] = Counter()
-    for repo in repos:
-        byte_totals.update(repo.languages)
-    total_bytes = sum(byte_totals.values())
+    total_bytes, byte_rows = language_breakdown(repos, limit=3)
     if total_bytes:
         language_share = " · ".join(
-            f"{escape_markdown(language, 40)} {amount / total_bytes:.0%}"
-            for language, amount in byte_totals.most_common(3)
+            f"{escape_markdown(language, 40)} {share:.0%}"
+            for language, _amount, share in byte_rows
         )
     else:
         language_share = "_Unavailable_"
@@ -990,6 +1193,174 @@ def render_repository_signals(repos: Sequence[Repo]) -> str:
         "\n\n_Excludes this profile repository. Signals are derived from default branches._"
     )
     return body
+
+
+def render_repository_signals_svg(repos: Sequence[Repo]) -> str | None:
+    if not repos:
+        return None
+
+    count = len(repos)
+    tests = sum(1 for repo in repos if repo.has_tests)
+    ci = sum(1 for repo in repos if repo.has_ci)
+    with_releases = sum(1 for repo in repos if repo.releases)
+    latest_commit = max(
+        (repo.latest_commit for repo in repos if repo.latest_commit),
+        key=lambda item: item.date,
+        default=None,
+    )
+    latest_text = format_date(latest_commit.date) if latest_commit else "Unavailable"
+    total_bytes, language_rows = language_breakdown(repos, limit=5)
+
+    parts = [
+        '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="450" '
+        'viewBox="0 0 1200 450" role="img" '
+        'aria-labelledby="signals-title signals-desc">',
+        '<title id="signals-title">Repository signals</title>',
+        (
+            '<desc id="signals-desc">Public repository counts, test and CI coverage, '
+            "release count, language byte share, and latest public commit date, "
+            "derived from default branches.</desc>"
+        ),
+        "<defs>",
+        '<linearGradient id="signals-accent" x1="0" y1="0" x2="1" y2="0">'
+        f'<stop offset="0" stop-color="{SVG_PURPLE}"/>'
+        f'<stop offset="0.55" stop-color="{SVG_BLUE}"/>'
+        f'<stop offset="1" stop-color="{SVG_CYAN}"/></linearGradient>',
+        '<linearGradient id="bar-grad" x1="0" y1="0" x2="1" y2="0">'
+        f'<stop offset="0" stop-color="{SVG_PURPLE}"/>'
+        f'<stop offset="0.6" stop-color="{SVG_BLUE}"/>'
+        f'<stop offset="1" stop-color="{SVG_CYAN}"/></linearGradient>',
+        '<radialGradient id="signals-glow" cx="50%" cy="50%" r="50%">'
+        f'<stop offset="0" stop-color="{SVG_BLUE}" stop-opacity="0.28"/>'
+        f'<stop offset="1" stop-color="{SVG_BLUE}" stop-opacity="0"/></radialGradient>',
+        '<pattern id="signals-grid" width="40" height="40" patternUnits="userSpaceOnUse">'
+        f'<path d="M 40 0 L 0 0 0 40" fill="none" stroke="{SVG_STROKE}" '
+        'stroke-width="1" opacity="0.38"/></pattern>',
+        "</defs>",
+        f'<rect width="1200" height="450" fill="{SVG_BG}"/>',
+        f'<rect width="1200" height="450" fill="url(#signals-grid)"/>',
+        '<ellipse cx="980" cy="20" rx="330" ry="210" fill="url(#signals-glow)"/>',
+        '<rect x="0" y="0" width="1200" height="3" fill="url(#signals-accent)"/>',
+        f'<text x="40" y="42" font-family="{SVG_MONO}" font-size="10" '
+        f'letter-spacing="2.4" fill="{SVG_PURPLE_LIGHT}">REPOSITORY SIGNALS</text>',
+        f'<text x="40" y="74" font-family="{SVG_SANS}" font-size="24" '
+        f'font-weight="600" fill="{SVG_TEXT}">Public engineering footprint</text>',
+        f'<text x="1160" y="42" text-anchor="end" font-family="{SVG_MONO}" '
+        f'font-size="10" letter-spacing="1.6" fill="{SVG_FAINT}">'
+        "DEFAULT BRANCHES ONLY</text>",
+    ]
+
+    kpis = [
+        (str(count), "PUBLIC REPOSITORIES", SVG_PURPLE),
+        (f"{tests}/{count}", "TEST SUITES DETECTED", SVG_BLUE),
+        (f"{ci}/{count}", "CI WORKFLOWS DETECTED", SVG_CYAN),
+        (str(with_releases), "WITH PUBLISHED RELEASES", SVG_PURPLE_LIGHT),
+    ]
+    for index, (value, label, color) in enumerate(kpis):
+        x = 40 + index * 285
+        parts.extend(
+            [
+                f'<rect x="{x}" y="100" width="265" height="96" rx="12" '
+                f'fill="{SVG_PANEL}" stroke="{SVG_STROKE}"/>',
+                f'<rect x="{x}" y="100" width="265" height="2" rx="1" '
+                f'fill="{color}" opacity="0.8"/>',
+                f'<text x="{x + 20}" y="{146}" font-family="{SVG_SANS}" '
+                f'font-size="36" font-weight="700" fill="{SVG_TEXT}">{value}</text>',
+                f'<text x="{x + 20}" y="{174}" font-family="{SVG_MONO}" '
+                f'font-size="9" letter-spacing="1.2" fill="{SVG_MUTED}">{label}</text>',
+            ]
+        )
+
+    parts.extend(
+        [
+            f'<rect x="40" y="218" width="700" height="188" rx="14" '
+            f'fill="{SVG_PANEL_DEEP}" fill-opacity="0.7" stroke="{SVG_STROKE}"/>',
+            f'<text x="60" y="248" font-family="{SVG_MONO}" font-size="9" '
+            f'letter-spacing="1.6" fill="{SVG_PURPLE_LIGHT}">'
+            "LANGUAGE SHARE BY BYTES</text>",
+        ]
+    )
+    if language_rows:
+        for index, (language, amount, share) in enumerate(language_rows):
+            y = 274 + index * 24
+            bar_width = max(2, int(480 * share))
+            parts.extend(
+                [
+                    f'<text x="60" y="{y + 8}" font-family="{SVG_SANS}" '
+                    f'font-size="11" fill="{SVG_SOFT}">{escape_xml(language, 40)}</text>',
+                    f'<rect x="160" y="{y}" width="480" height="10" rx="5" '
+                    f'fill="{SVG_STROKE}"/>',
+                    f'<rect x="160" y="{y}" width="{bar_width}" height="10" rx="5" '
+                    'fill="url(#bar-grad)"/>',
+                    f'<text x="660" y="{y + 9}" font-family="{SVG_MONO}" '
+                    f'font-size="10" fill="{SVG_SOFT}">{share:.0%}</text>',
+                    f'<text x="720" y="{y + 9}" text-anchor="end" '
+                    f'font-family="{SVG_MONO}" font-size="9" fill="{SVG_FAINT}">'
+                    f"{format_bytes(amount)}</text>",
+                ]
+            )
+    else:
+        parts.append(
+            f'<text x="60" y="282" font-family="{SVG_SANS}" font-size="11" '
+            f'fill="{SVG_MUTED}">Language data unavailable.</text>'
+        )
+
+    parts.extend(
+        [
+            f'<rect x="780" y="218" width="380" height="188" rx="14" '
+            f'fill="{SVG_PANEL_DEEP}" fill-opacity="0.7" stroke="{SVG_STROKE}"/>',
+            f'<text x="800" y="248" font-family="{SVG_MONO}" font-size="9" '
+            f'letter-spacing="1.6" fill="{SVG_PURPLE_LIGHT}">LATEST PUBLIC COMMIT</text>',
+            f'<text x="800" y="292" font-family="{SVG_SANS}" font-size="26" '
+            f'font-weight="600" fill="{SVG_TEXT}">{escape_xml(latest_text)}</text>',
+            f'<line x1="800" y1="312" x2="1140" y2="312" stroke="{SVG_STROKE}"/>',
+            f'<text x="800" y="340" font-family="{SVG_SANS}" font-size="11" '
+            f'fill="{SVG_SOFT}">{count} public repositories</text>',
+            f'<text x="800" y="362" font-family="{SVG_SANS}" font-size="11" '
+            f'fill="{SVG_MUTED}">{format_bytes(total_bytes)} of language data measured</text>',
+            f'<text x="800" y="384" font-family="{SVG_SANS}" font-size="10" '
+            f'fill="{SVG_FAINT}">Excludes this profile repository.</text>',
+            f'<text x="40" y="434" font-family="{SVG_SANS}" font-size="9.5" '
+            f'fill="{SVG_FAINT}">Generated from public repository metadata. '
+            "No inferred or estimated values.</text>",
+            "</svg>",
+        ]
+    )
+    return "\n".join(parts) + "\n"
+
+
+def render_repository_signals(
+    repos: Sequence[Repo],
+    image_path: str = "assets/repository-signals.svg",
+) -> tuple[str, str | None]:
+    if not repos:
+        return "_Repository signals are unavailable._", None
+
+    table = render_repository_signals_table(repos)
+    svg = render_repository_signals_svg(repos)
+    if svg is None:
+        return table, None
+
+    count = len(repos)
+    tests = sum(1 for repo in repos if repo.has_tests)
+    ci = sum(1 for repo in repos if repo.has_ci)
+    releases = sum(1 for repo in repos if repo.releases)
+    digest = hashlib.sha256(svg.encode("utf-8")).hexdigest()[:8]
+    separator = "&" if "?" in image_path else "?"
+    image_url = f"{image_path}{separator}v={digest}"
+    alt = (
+        f"Repository signals: {count} public repositories; test suites detected in "
+        f"{tests}; CI workflows detected in {ci}; {releases} repositories with "
+        "published releases."
+    )
+    markdown = (
+        f"![{alt}]({image_url})\n\n"
+        "<details>\n"
+        "<summary>Raw signal values</summary>\n\n"
+        f"{table}\n\n"
+        "</details>"
+    )
+    return markdown, svg
 
 
 def activity_weeks_from_commits(commits: Sequence[Commit]) -> list[dict[str, Any]]:
@@ -1059,41 +1430,63 @@ def aggregate_commit_activity(
 
 def _activity_color(count: int, maximum: int) -> str:
     if count <= 0:
-        return "#ebedf0"
+        return SVG_STROKE
     if maximum <= 1:
-        return "#40c463"
-    scale = ("#9be9a8", "#40c463", "#30a14e", "#216e39")
+        return SVG_CYAN
+    scale = ("#312E81", "#6D28D9", SVG_BLUE, SVG_CYAN)
     level = min(3, max(0, int((count / maximum) * 3)))
     return scale[level]
 
 
-def render_activity_svg(start: date, grid: Sequence[Sequence[int]]) -> str:
-    """Render a dependency-free, factual commit-activity heatmap."""
+def render_activity_svg(
+    start: date,
+    grid: Sequence[Sequence[int]],
+    end_date: date | None = None,
+) -> str:
+    """Render a dependency-free, dark commit-activity dashboard."""
     weeks = len(grid[0]) if grid else 0
-    cell = 11
-    gap = 3
+    cell = 18
+    gap = 5
     step = cell + gap
-    left = 42
-    top = 26
-    width = max(240, left + weeks * step - gap + 12)
-    height = top + 7 * step - gap + 30
+    left = 100
+    top = 112
     maximum = max((value for row in grid for value in row), default=0)
     total = sum(sum(row) for row in grid)
-    range_end = start + timedelta(weeks=weeks - 1, days=6) if weeks else start
+    computed_end = start + timedelta(weeks=weeks - 1, days=6) if weeks else start
+    range_end = min(computed_end, end_date) if end_date else computed_end
 
     parts = [
-        '<svg xmlns="http://www.w3.org/2000/svg" '
-        f'width="{width}" height="{height}" viewBox="0 0 {width} {height}" '
-        'role="img" aria-labelledby="activity-title activity-desc">',
+        '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" '
+        'viewBox="0 0 1200 300" role="img" '
+        'aria-labelledby="activity-title activity-desc">',
         '<title id="activity-title">Public commit activity</title>',
         (
             '<desc id="activity-desc">Public commits on default branches from '
             f"{start.isoformat()} to {range_end.isoformat()}: {total} total.</desc>"
         ),
-        (
-            f'<rect x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" '
-            'rx="6" fill="#ffffff" stroke="#d0d7de"/>'
-        ),
+        "<defs>",
+        '<linearGradient id="activity-accent" x1="0" y1="0" x2="1" y2="0">'
+        f'<stop offset="0" stop-color="{SVG_PURPLE}"/>'
+        f'<stop offset="0.55" stop-color="{SVG_BLUE}"/>'
+        f'<stop offset="1" stop-color="{SVG_CYAN}"/></linearGradient>',
+        '<radialGradient id="activity-glow" cx="50%" cy="50%" r="50%">'
+        f'<stop offset="0" stop-color="{SVG_PURPLE}" stop-opacity="0.3"/>'
+        f'<stop offset="1" stop-color="{SVG_PURPLE}" stop-opacity="0"/></radialGradient>',
+        '<pattern id="activity-grid" width="40" height="40" patternUnits="userSpaceOnUse">'
+        f'<path d="M 40 0 L 0 0 0 40" fill="none" stroke="{SVG_STROKE}" '
+        'stroke-width="1" opacity="0.38"/></pattern>',
+        "</defs>",
+        f'<rect width="1200" height="300" fill="{SVG_BG}"/>',
+        f'<rect width="1200" height="300" fill="url(#activity-grid)"/>',
+        '<ellipse cx="1000" cy="10" rx="330" ry="200" fill="url(#activity-glow)"/>',
+        '<rect x="0" y="0" width="1200" height="3" fill="url(#activity-accent)"/>',
+        f'<text x="40" y="40" font-family="{SVG_MONO}" font-size="10" '
+        f'letter-spacing="2.4" fill="{SVG_PURPLE_LIGHT}">CONTRIBUTION ACTIVITY</text>',
+        f'<text x="40" y="72" font-family="{SVG_SANS}" font-size="24" '
+        f'font-weight="600" fill="{SVG_TEXT}">Public commit rhythm</text>',
+        f'<text x="1160" y="42" text-anchor="end" font-family="{SVG_MONO}" '
+        f'font-size="10" letter-spacing="1.6" fill="{SVG_FAINT}">'
+        f"LAST {weeks} WEEKS</text>",
     ]
 
     previous_month = None
@@ -1102,16 +1495,15 @@ def render_activity_svg(start: date, grid: Sequence[Sequence[int]]) -> str:
         month = week_date.strftime("%b")
         if column == 0 or month != previous_month:
             parts.append(
-                f'<text x="{left + column * step}" y="16" font-size="9" '
-                f'fill="#57606a" font-family="Arial, sans-serif">{month}</text>'
+                f'<text x="{left + column * step}" y="98" font-family="{SVG_MONO}" '
+                f'font-size="9" fill="{SVG_MUTED}">{month}</text>'
             )
         previous_month = month
 
     for row, label in ((1, "Mon"), (3, "Wed"), (5, "Fri")):
         parts.append(
-            f'<text x="{left - 6}" y="{top + row * step + 9}" font-size="9" '
-            f'fill="#57606a" text-anchor="end" '
-            f'font-family="Arial, sans-serif">{label}</text>'
+            f'<text x="{left - 12}" y="{top + row * step + 13}" text-anchor="end" '
+            f'font-family="{SVG_MONO}" font-size="9" fill="{SVG_MUTED}">{label}</text>'
         )
 
     for row in range(7):
@@ -1120,32 +1512,46 @@ def render_activity_svg(start: date, grid: Sequence[Sequence[int]]) -> str:
             day = start + timedelta(weeks=column, days=row)
             parts.append(
                 f'<rect x="{left + column * step}" y="{top + row * step}" '
-                f'width="{cell}" height="{cell}" rx="2" '
+                f'width="{cell}" height="{cell}" rx="4" '
                 f'fill="{_activity_color(count, maximum)}">'
                 f"<title>{day.isoformat()}: {_format_count(count, 'commit')}</title>"
                 "</rect>"
             )
 
-    legend_y = height - 12
-    parts.append(
-        f'<text x="{left}" y="{legend_y}" font-size="9" fill="#57606a" '
-        f'font-family="Arial, sans-serif">Less</text>'
+    parts.extend(
+        [
+            f'<line x1="500" y1="100" x2="500" y2="272" stroke="{SVG_STROKE}"/>',
+            f'<text x="540" y="186" font-family="{SVG_SANS}" font-size="64" '
+            f'font-weight="700" fill="{SVG_TEXT}">{total}</text>',
+            f'<text x="544" y="214" font-family="{SVG_MONO}" font-size="9" '
+            f'letter-spacing="1.8" fill="{SVG_MUTED}">PUBLIC COMMITS</text>',
+            f'<text x="544" y="242" font-family="{SVG_SANS}" font-size="12" '
+            f'fill="{SVG_SOFT}">{start.isoformat()} — {range_end.isoformat()}</text>',
+            f'<text x="544" y="262" font-family="{SVG_SANS}" font-size="10" '
+            f'fill="{SVG_FAINT}">Derived from default branches across public repositories.</text>',
+        ]
     )
-    legend_colors = ("#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39")
+
+    legend_y = 288
+    parts.append(
+        f'<text x="544" y="{legend_y}" font-family="{SVG_MONO}" font-size="9" '
+        f'fill="{SVG_MUTED}">LESS</text>'
+    )
+    legend_colors = (SVG_STROKE, "#312E81", "#6D28D9", SVG_BLUE, SVG_CYAN)
     for index, color in enumerate(legend_colors):
-        x = left + 26 + index * (cell + 3)
+        x = 582 + index * 16
         parts.append(
-            f'<rect x="{x}" y="{legend_y - 9}" width="{cell}" height="{cell}" '
-            f'rx="2" fill="{color}"/>'
+            f'<rect x="{x}" y="{legend_y - 10}" width="10" height="10" rx="2" '
+            f'fill="{color}"/>'
         )
     parts.append(
-        f'<text x="{left + 26 + len(legend_colors) * (cell + 3) + 2}" y="{legend_y}" '
-        f'font-size="9" fill="#57606a" font-family="Arial, sans-serif">More</text>'
+        f'<text x="{582 + len(legend_colors) * 16 + 6}" y="{legend_y}" '
+        f'font-family="{SVG_MONO}" font-size="9" fill="{SVG_MUTED}">MORE</text>'
     )
     parts.append(
-        f'<text x="{width - 12}" y="{legend_y}" font-size="9" fill="#57606a" '
-        f'text-anchor="end" font-family="Arial, sans-serif">'
-        f"{_format_count(total, 'commit')}</text>"
+        f'<text x="1160" y="{legend_y}" text-anchor="end" font-family="{SVG_SANS}" '
+        f'font-size="10" fill="{SVG_FAINT}">'
+        f"{_format_count(total, 'commit')} in range</text>"
     )
     parts.append("</svg>")
     return "\n".join(parts) + "\n"
@@ -1172,12 +1578,13 @@ def render_commit_activity(
         source = "repository statistics"
 
     start, week_end, grid = aggregate_commit_activity(repos, now, weeks)
-    svg = render_activity_svg(start, grid)
+    today = now.astimezone(timezone.utc).date()
+    range_end = min(week_end + timedelta(days=6), today)
+    svg = render_activity_svg(start, grid, range_end)
     digest = hashlib.sha256(svg.encode("utf-8")).hexdigest()[:8]
     separator = "&" if "?" in image_path else "?"
     image_url = f"{image_path}{separator}v={digest}"
     total = sum(sum(row) for row in grid)
-    range_end = week_end + timedelta(days=6)
     caption = (
         f"_Public commits on default branches, {start.isoformat()} through "
         f"{range_end.isoformat()} ({_format_count(total, 'commit')}; "
@@ -1226,21 +1633,39 @@ def build_sections(
     repos: Sequence[Repo],
     now: datetime,
     summaries: dict[str, str],
-    image_path: str,
-) -> tuple[dict[str, str], str | None, list[Repo]]:
+    asset_prefix: str = "assets",
+) -> tuple[dict[str, str], dict[str, str], list[Repo]]:
+    prefix = asset_prefix.rstrip("/")
     ranked = rank_repositories(repos, now)
     featured = ranked[:FEATURED_LIMIT]
-    activity_markdown, svg = render_commit_activity(ranked, now, image_path)
+
+    featured_markdown, featured_svg = render_featured(
+        featured, summaries, f"{prefix}/featured-projects.svg"
+    )
+    signals_markdown, signals_svg = render_repository_signals(
+        ranked, f"{prefix}/repository-signals.svg"
+    )
+    activity_markdown, activity_svg = render_commit_activity(
+        ranked, now, f"{prefix}/commit-activity.svg"
+    )
+
+    assets: dict[str, str] = {}
+    if featured_svg is not None:
+        assets[f"{prefix}/featured-projects.svg"] = featured_svg
+    if signals_svg is not None:
+        assets[f"{prefix}/repository-signals.svg"] = signals_svg
+    if activity_svg is not None:
+        assets[f"{prefix}/commit-activity.svg"] = activity_svg
 
     bodies = {
-        "featured-projects": render_featured(featured, summaries),
+        "featured-projects": featured_markdown,
         "project-index": render_project_index(ranked, featured, summaries),
         "recent-activity": render_recent_activity(ranked),
         "latest-releases": render_releases(ranked),
-        "repository-signals": render_repository_signals(ranked),
+        "repository-signals": signals_markdown,
         "commit-activity": activity_markdown,
     }
-    return bodies, svg, ranked
+    return bodies, assets, ranked
 
 
 def update_readme_content(
@@ -1248,13 +1673,13 @@ def update_readme_content(
     repos: Sequence[Repo],
     now: datetime,
     summaries: dict[str, str],
-    image_path: str,
-) -> tuple[str, str | None, list[Repo]]:
-    bodies, svg, ranked = build_sections(repos, now, summaries, image_path)
+    asset_prefix: str = "assets",
+) -> tuple[str, dict[str, str], list[Repo]]:
+    bodies, assets, ranked = build_sections(repos, now, summaries, asset_prefix)
     updated = readme
     for name in SECTION_NAMES:
         updated = replace_section(updated, name, bodies[name])
-    return updated, svg, ranked
+    return updated, assets, ranked
 
 
 # ---------------------------------------------------------------------------
@@ -1328,8 +1753,8 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     workspace = Path(os.environ.get("GITHUB_WORKSPACE") or ".")
     readme_path = args.readme or (workspace / "README.md")
-    assets_path = readme_path.parent / "assets" / "commit-activity.svg"
-    image_path = assets_path.relative_to(readme_path.parent).as_posix()
+    assets_dir = readme_path.parent / "assets"
+    asset_prefix = assets_dir.relative_to(readme_path.parent).as_posix()
 
     try:
         readme = load_readme(readme_path)
@@ -1362,23 +1787,23 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         now = datetime.now(timezone.utc)
         summaries = load_project_summaries()
-        updated, svg, ranked = update_readme_content(
-            readme, repositories, now, summaries, image_path
+        updated, assets, ranked = update_readme_content(
+            readme, repositories, now, summaries, asset_prefix
         )
 
         if args.check:
-            svg_changed = False
-            if svg is not None:
-                existing_svg = (
-                    assets_path.read_text(encoding="utf-8")
-                    if assets_path.exists()
-                    else None
+            changed = updated != readme
+            for relative_path, content in assets.items():
+                path = readme_path.parent / relative_path
+                existing = (
+                    path.read_text(encoding="utf-8") if path.exists() else None
                 )
-                svg_changed = existing_svg != svg
-            if updated == readme and not svg_changed:
-                log.info("README is up to date.")
+                if existing != content:
+                    changed = True
+            if not changed:
+                log.info("README and generated assets are up to date.")
                 return 0
-            log.info("README is out of date.")
+            log.info("README or generated assets are out of date.")
             return 1
 
         if args.dry_run:
@@ -1387,8 +1812,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 0
 
         write_atomic(readme_path, updated)
-        if svg is not None:
-            write_atomic(assets_path, svg)
+        for relative_path, content in assets.items():
+            write_atomic(readme_path.parent / relative_path, content)
 
         log.info("Profile README updated: %s", readme_path)
         log.info("Repositories checked: %d", len(repositories))

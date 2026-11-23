@@ -1,9 +1,16 @@
-# Faseeh Abdullah
+<p align="center">
+  <img src="assets/hero.svg" alt="Faseeh Abdullah — AI Systems Engineer, Automation Architect, Backend Developer. I build reliable systems where CRM data, webhooks, and APIs meet." width="100%">
+</p>
 
-**AI Systems Engineer · Automation Architect · Backend Developer**
+<p align="center">
+  <a href="#selected-engineering-work">Work</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#repository-signals">Signals</a> ·
+  <a href="#contact">Contact</a>
+</p>
 
 I build backend systems that make business operations legible: event-driven integrations,
-reliable data pipelines, and AI-assisted workflows. Most of my work sits where CRM data,
+reliable data pipelines, and AI-assisted workflows. My work sits where CRM data,
 webhooks, and APIs meet.
 
 Currently building a GoHighLevel integration suite — webhook ingestion, lead scoring,
@@ -35,6 +42,8 @@ I optimize for systems that can be operated, not just demonstrated.
 
 ## Technical range
 
+![Technology stack: Python; FastAPI and Pydantic; Node.js and Express; GoHighLevel API v2; AWS Lambda; Docker; GitHub Actions; testing with retries and idempotency](assets/tech-stack.svg)
+
 **Languages** Python · JavaScript · TypeScript
 
 **Backend & APIs** FastAPI · Pydantic · Node.js · Express · REST APIs
@@ -51,39 +60,21 @@ I optimize for systems that can be operated, not just demonstrated.
 
 <!-- featured-projects:start -->
 
-### [ghl-snapshot-validator](https://github.com/faseehabdullah57-blip/ghl-snapshot-validator)
+![Featured engineering projects: ghl-snapshot-validator, ghl-webhook-processor., ghl-data-migration-tool, ghl-lead-scoring-service](assets/featured-projects.svg?v=84155352)
 
-A CLI that audits GoHighLevel sub-account configuration against a canonical blueprint, detects drift across fields, pipelines, and workflows, and can auto-fix missing resources.
-
-`Python` · tests · CI · updated 2026-11-13
-
-Latest: Complete GoHighLevel snapshot configuration validator CLI with multi-location batch audit and auto-fix (`0d3437f`)
-
-### [ghl-webhook-processor.](https://github.com/faseehabdullah57-blip/ghl-webhook-processor.)
-
-An Express service that authenticates and normalizes GoHighLevel webhooks, acknowledges fast, then forwards events with retries, a dead-letter queue, and replay support.
-
-`JavaScript` · tests · Docker · updated 2026-11-13
-
-Latest: Complete GoHighLevel webhook processor with DLQ, replay API, and Docker (`afe4be2`)
-
-### [ghl-data-migration-tool](https://github.com/faseehabdullah57-blip/ghl-data-migration-tool)
-
-A config-driven migration pipeline that maps legacy CSV exports, validates contacts, opportunities, and notes, and loads them into GoHighLevel API v2 with row-level error reports.
-
-`Python` · tests · Docker · updated 2026-11-13
-
-Latest: feat: add Opportunities & Notes migration, PII gitignore rules, and Docker support (`af12149`)
-
-### [ghl-lead-scoring-service](https://github.com/faseehabdullah57-blip/ghl-lead-scoring-service)
-
-A serverless, event-driven lead scoring engine with configurable rules, inactivity decay, webhook idempotency, and speed-to-lead task creation.
-
-`Python` · tests · updated 2026-11-13
-
-Latest: feat: add inactivity time-decay, webhook idempotency, and speed-to-lead task creation (`4263aaa`)
+[ghl-snapshot-validator](https://github.com/faseehabdullah57-blip/ghl-snapshot-validator) · [ghl-webhook-processor.](https://github.com/faseehabdullah57-blip/ghl-webhook-processor.) · [ghl-data-migration-tool](https://github.com/faseehabdullah57-blip/ghl-data-migration-tool) · [ghl-lead-scoring-service](https://github.com/faseehabdullah57-blip/ghl-lead-scoring-service)
 
 _Ranking: recency, stars/forks, description, tests, CI, Docker, releases, documentation, and repository size. Ties break by stars, then most recent push._
+
+<details>
+<summary>Project details</summary>
+
+- **[ghl-snapshot-validator](https://github.com/faseehabdullah57-blip/ghl-snapshot-validator)** — A CLI that audits GoHighLevel sub-account configuration against a canonical blueprint, detects drift across fields, pipelines, and workflows, and can auto-fix missing resources.
+- **[ghl-webhook-processor.](https://github.com/faseehabdullah57-blip/ghl-webhook-processor.)** — An Express service that authenticates and normalizes GoHighLevel webhooks, acknowledges fast, then forwards events with retries, a dead-letter queue, and replay support.
+- **[ghl-data-migration-tool](https://github.com/faseehabdullah57-blip/ghl-data-migration-tool)** — A config-driven migration pipeline that maps legacy CSV exports, validates contacts, opportunities, and notes, and loads them into GoHighLevel API v2 with row-level error reports.
+- **[ghl-lead-scoring-service](https://github.com/faseehabdullah57-blip/ghl-lead-scoring-service)** — A serverless, event-driven lead scoring engine with configurable rules, inactivity decay, webhook idempotency, and speed-to-lead task creation.
+
+</details>
 
 <!-- featured-projects:end -->
 
@@ -105,9 +96,25 @@ _Ranking: recency, stars/forks, description, tests, CI, Docker, releases, docume
 
 ---
 
-## Current focus
+## Architecture
 
-The current build cycle is the GoHighLevel integration suite:
+The public repositories document four integration paths and one shared reliability model.
+
+![Integration architecture: GoHighLevel webhook processing with DLQ and replay, Lambda lead scoring, CSV data migration, and snapshot configuration QA](assets/architecture.svg)
+
+![Webhook reliability model: fast acknowledgement, signature authentication, idempotent processing, retry with backoff, dead-letter queue, and replay](assets/reliability-flow.svg)
+
+- **Webhook processing** — authenticate, normalize, retry, dead-letter, replay
+- **Lead scoring** — API Gateway → Lambda rules → score/decay → GHL API
+- **Data migration** — CSV → validate/map → dedupe → GHL API → row-level errors
+- **Configuration QA** — blueprint → validator → drift checks → auto-fix → QA report
+
+Each path is designed around the same failure boundaries: authenticated ingress, idempotent
+processing, bounded retries, and an auditable recovery path.
+
+---
+
+## Current focus
 
 - hardening webhook ingestion with idempotency, retry/backoff, and replay
 - detecting sub-account configuration drift before client onboarding
@@ -148,6 +155,11 @@ _No published releases across public repositories yet. Tagged releases will appe
 
 <!-- repository-signals:start -->
 
+![Repository signals: 8 public repositories; test suites detected in 4; CI workflows detected in 1; 0 repositories with published releases.](assets/repository-signals.svg?v=b447ae32)
+
+<details>
+<summary>Raw signal values</summary>
+
 | Signal | Value |
 | :--- | :--- |
 | Public repositories | **8** |
@@ -160,6 +172,8 @@ _No published releases across public repositories yet. Tagged releases will appe
 
 _Excludes this profile repository. Signals are derived from default branches._
 
+</details>
+
 <!-- repository-signals:end -->
 
 ---
@@ -168,9 +182,9 @@ _Excludes this profile repository. Signals are derived from default branches._
 
 <!-- commit-activity:start -->
 
-![Public commit activity over the last 12 weeks](assets/commit-activity.svg?v=52602d79)
+![Public commit activity over the last 12 weeks](assets/commit-activity.svg?v=a1b6631e)
 
-_Public commits on default branches, 2026-09-06 through 2026-11-28 (8 commits; source: repository statistics)._
+_Public commits on default branches, 2026-09-06 through 2026-11-23 (9 commits; source: repository statistics)._
 
 <!-- commit-activity:end -->
 

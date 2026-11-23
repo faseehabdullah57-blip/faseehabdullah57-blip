@@ -70,9 +70,14 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add README.md
-          if [ -f assets/commit-activity.svg ]; then
-            git add assets/commit-activity.svg
-          fi
+          for asset in \
+            assets/featured-projects.svg \
+            assets/repository-signals.svg \
+            assets/commit-activity.svg; do
+            if [ -f "$asset" ]; then
+              git add "$asset"
+            fi
+          done
 
           if git diff --cached --quiet; then
             echo "No generated changes to commit."

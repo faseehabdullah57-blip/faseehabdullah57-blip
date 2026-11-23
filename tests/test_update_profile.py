@@ -380,7 +380,9 @@ class CollectionTests(unittest.TestCase):
 
 class RendererTests(unittest.TestCase):
     def test_featured_empty(self) -> None:
-        self.assertIn("No public repositories", up.render_featured([], {}))
+        markdown, svg = up.render_featured([], {})
+        self.assertIn("No public repositories", markdown)
+        self.assertIsNone(svg)
 
     def test_featured_uses_curated_summary_and_signals(self) -> None:
         repo = make_repo(
@@ -388,22 +390,45 @@ class RendererTests(unittest.TestCase):
             tree_paths=["README.md", "tests/test_x.py", ".github/workflows/ci.yml", "Dockerfile"],
             commits=[make_commit()],
         )
-        result = up.render_featured([repo], {"engine": "Curated summary."})
-        self.assertIn("Curated summary.", result)
-        self.assertIn("tests", result)
-        self.assertIn("CI", result)
-        self.assertIn("Docker", result)
-        self.assertIn("Latest:", result)
-        self.assertIn("Ranking:", result)
+        markdown, svg = up.render_featured([repo], {"engine": "Curated summary."})
+        assert svg is not None
+        self.assertIn("Curated summary.", svg)
+        self.assertIn("tests", svg)
+        self.assertIn("CI", svg)
+        self.assertIn("Docker", svg)
+        self.assertIn("Latest:", svg)
+        self.assertIn("Ranking:", markdown)
+        self.assertIn("Curated summary.", markdown)
+        self.assertIn("[engine]", markdown)
+        self.assertIn("assets/featured-projects.svg?v=", markdown)
 
-    def test_featured_escapes_untrusted_text(self) -> None:
+    def test_featured_svg_escapes_untrusted_text(self) -> None:
         repo = make_repo(
             name="hostile",
-            description="[[x]](javascript:alert(1)) <!-- hidden -->",
+            description="<script>alert(1)</script> <!-- hidden -->",
         )
-        result = up.render_featured([repo], {})
-        self.assertNotIn("<!--", result)
-        self.assertIn(r"\[", result)
+        markdown, svg = up.render_featured([repo], {})
+        assert svg is not None
+        self.assertNotIn("<script>", svg)
+        self.assertNotIn("<!--", svg)
+        self.assertIn("&lt;script&gt;", svg)
+        self.assertNotIn("<script>", markdown)
+
+    def test_featured_svg_has_dark_card_surface(self) -> None:
+        repo = make_repo(name="engine", description="Summary.")
+        _markdown, svg = up.render_featured([repo], {})
+        assert svg is not None
+        self.assertIn(f'fill="{up.SVG_BG}"', svg)
+        self.assertIn(f'fill="{up.SVG_PANEL}"', svg)
+        self.assertIn("SELECTED ENGINEERING WORK", svg)
+
+    def test_wrap_text_limits_lines_and_adds_ellipsis(self) -> None:
+        lines = up.wrap_text("one two three four five six seven eight", 10, 2)
+        self.assertEqual(len(lines), 2)
+        self.assertTrue(lines[-1].endswith("..."))
+
+    def test_wrap_text_keeps_short_text_intact(self) -> None:
+        self.assertEqual(up.wrap_text("short summary", 40, 3), ["short summary"])
 
     def test_project_index_excludes_featured(self) -> None:
         featured = make_repo(name="featured")
@@ -459,7 +484,9 @@ class RendererTests(unittest.TestCase):
         self.assertIn("pre-release", up.render_releases([repo]))
 
     def test_signals_empty(self) -> None:
-        self.assertIn("unavailable", up.render_repository_signals([]))
+        markdown, svg = up.render_repository_signals([])
+        self.assertIn("unavailable", markdown)
+        self.assertIsNone(svg)
 
     def test_signals_real_counts(self) -> None:
         one = make_repo(
@@ -470,18 +497,25 @@ class RendererTests(unittest.TestCase):
             releases=[make_release()],
         )
         two = make_repo(name="two", language="JavaScript", languages={"JavaScript": 50})
-        result = up.render_repository_signals([one, two])
-        self.assertIn("Public repositories", result)
-        self.assertIn("**2**", result)
-        self.assertIn("Python ×1", result)
-        self.assertIn("Test suites detected", result)
-        self.assertIn("**1** of 2", result)
-        self.assertIn("**1**", result)
-        self.assertIn("2026-11-20", result)
+        markdown, svg = up.render_repository_signals([one, two])
+        assert svg is not None
+        self.assertIn("Public repositories", markdown)
+        self.assertIn("**2**", markdown)
+        self.assertIn("Python ×1", markdown)
+        self.assertIn("Test suites detected", markdown)
+        self.assertIn("**1** of 2", markdown)
+        self.assertIn("2026-11-20", markdown)
+        self.assertIn("PUBLIC REPOSITORIES", svg)
+        self.assertIn("1/2", svg)
+        self.assertIn("LANGUAGE SHARE BY BYTES", svg)
+        self.assertIn("67%", svg)
+        self.assertIn("2026-11-20", svg)
+        self.assertIn("assets/repository-signals.svg?v=", markdown)
 
     def test_signals_note_incomplete_data(self) -> None:
         repo = make_repo(errors=["releases: boom"])
-        self.assertIn("could not be read", up.render_repository_signals([repo]))
+        markdown, _svg = up.render_repository_signals([repo])
+        self.assertIn("could not be read", markdown)
 
     def test_aggregate_commit_activity(self) -> None:
         today = NOW.date()
@@ -543,8 +577,10 @@ class RendererTests(unittest.TestCase):
         self.assertIn("<title>", svg)
         self.assertIn("Mon", svg)
         self.assertIn("1 commit", svg)
+        self.assertIn("2026-11-21", markdown)
+        self.assertNotIn("2026-11-28", markdown)
         start, _end, grid = up.aggregate_commit_activity([repo], NOW, 12)
-        self.assertEqual(svg, up.render_activity_svg(start, grid))
+        self.assertEqual(svg, up.render_activity_svg(start, grid, NOW.date()))
 
 
 class SummaryTests(unittest.TestCase):
@@ -702,13 +738,13 @@ class AssemblyTests(unittest.TestCase):
         return f"# Manual title\n\n{sections}\n\nManual footer"
 
     def test_assembly_preserves_manual_text_and_updates_all_sections(self) -> None:
-        updated, svg, _ranked = up.update_readme_content(
-            self.readme_fixture(), [], NOW, {}, "assets/commit-activity.svg"
+        updated, assets, _ranked = up.update_readme_content(
+            self.readme_fixture(), [], NOW, {}, "assets"
         )
         self.assertIn("# Manual title", updated)
         self.assertIn("Manual footer", updated)
         self.assertNotIn("\nold\n", updated)
-        self.assertIsNone(svg)
+        self.assertEqual(assets, {})
         for name in up.SECTION_NAMES:
             self.assertEqual(updated.count(f"<!-- {name}:start -->"), 1)
             self.assertEqual(updated.count(f"<!-- {name}:end -->"), 1)
@@ -716,23 +752,46 @@ class AssemblyTests(unittest.TestCase):
     def test_assembly_missing_section_raises(self) -> None:
         readme = self.readme_fixture().replace("<!-- latest-releases:start -->", "")
         with self.assertRaises(up.SectionError):
-            up.update_readme_content(readme, [], NOW, {}, "assets/x.svg")
+            up.update_readme_content(readme, [], NOW, {}, "assets")
 
     def test_assembly_empty_repository_list_uses_fallbacks(self) -> None:
-        updated, _svg, ranked = up.update_readme_content(
-            self.readme_fixture(), [], NOW, {}, "assets/x.svg"
+        updated, assets, ranked = up.update_readme_content(
+            self.readme_fixture(), [], NOW, {}, "assets"
         )
         self.assertEqual(ranked, [])
+        self.assertEqual(assets, {})
         self.assertIn("No public repositories", updated)
         self.assertIn("No published releases", updated)
         self.assertIn("No public commits", updated)
 
-    def test_assembly_is_idempotent(self) -> None:
-        first, _svg, _ranked = up.update_readme_content(
-            self.readme_fixture(), [], NOW, {}, "assets/x.svg"
+    def test_assembly_emits_three_designed_assets(self) -> None:
+        repo = make_repo(
+            name="engine",
+            description="A verified sample repository.",
+            tree_paths=["README.md", "tests/test_x.py", "Dockerfile"],
+            commits=[make_commit()],
         )
-        second, _svg, _ranked = up.update_readme_content(
-            first, [], NOW, {}, "assets/x.svg"
+        updated, assets, _ranked = up.update_readme_content(
+            self.readme_fixture(), [repo], NOW, {}, "assets"
+        )
+        self.assertEqual(
+            set(assets),
+            {
+                "assets/featured-projects.svg",
+                "assets/repository-signals.svg",
+                "assets/commit-activity.svg",
+            },
+        )
+        self.assertIn("assets/featured-projects.svg?v=", updated)
+        self.assertIn("assets/repository-signals.svg?v=", updated)
+        self.assertIn("assets/commit-activity.svg?v=", updated)
+
+    def test_assembly_is_idempotent(self) -> None:
+        first, _assets, _ranked = up.update_readme_content(
+            self.readme_fixture(), [], NOW, {}, "assets"
+        )
+        second, _assets, _ranked = up.update_readme_content(
+            first, [], NOW, {}, "assets"
         )
         self.assertEqual(first, second)
 
@@ -829,11 +888,23 @@ class MainFlowTests(unittest.TestCase):
                 self.assertEqual(up.main(["--readme", str(readme)]), 0)
                 content = readme.read_text(encoding="utf-8")
                 self.assertIn("# Manual title", content)
-                self.assertIn("A verified sample repository.", content)
+                self.assertIn("[sample-repo](https://github.com/owner/sample-repo)", content)
+                self.assertIn("assets/featured-projects.svg?v=", content)
+                self.assertIn("assets/repository-signals.svg?v=", content)
+                self.assertIn("assets/commit-activity.svg?v=", content)
                 self.assertIn("feat: sample commit", content)
                 self.assertIn("No published releases", content)
                 self.assertNotIn("_Generated by the profile updater._", content)
-                self.assertTrue((Path(directory) / "assets" / "commit-activity.svg").exists())
+                featured_svg = Path(directory) / "assets" / "featured-projects.svg"
+                signals_svg = Path(directory) / "assets" / "repository-signals.svg"
+                activity_svg = Path(directory) / "assets" / "commit-activity.svg"
+                self.assertTrue(featured_svg.exists())
+                self.assertTrue(signals_svg.exists())
+                self.assertTrue(activity_svg.exists())
+                self.assertIn(
+                    "A verified sample repository.",
+                    featured_svg.read_text(encoding="utf-8"),
+                )
                 self.assertEqual(up.main(["--check", "--readme", str(readme)]), 0)
 
     def test_check_detects_stale_generated_content(self) -> None:
@@ -852,11 +923,29 @@ class MainFlowTests(unittest.TestCase):
                 self.assertEqual(up.main(["--readme", str(readme)]), 0)
                 text = readme.read_text(encoding="utf-8")
                 text = text.replace(
-                    "A verified sample repository.",
+                    "No published releases across public repositories yet.",
                     "stale manual edit",
                     1,
                 )
                 readme.write_text(text, encoding="utf-8")
+                self.assertEqual(up.main(["--check", "--readme", str(readme)]), 1)
+
+    def test_check_detects_stale_generated_asset(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            readme = Path(directory) / "README.md"
+            readme.write_text(self.readme_fixture(), encoding="utf-8")
+            env = {
+                "GITHUB_TOKEN": "",
+                "GH_TOKEN": "",
+                "GITHUB_REPOSITORY_OWNER": "owner",
+                "GITHUB_REPOSITORY": "owner/profile",
+            }
+            with mock.patch.dict(os.environ, env, clear=False), mock.patch.object(
+                up, "GitHubClient", FakeMainClient
+            ):
+                self.assertEqual(up.main(["--readme", str(readme)]), 0)
+                asset = Path(directory) / "assets" / "repository-signals.svg"
+                asset.write_text("stale asset", encoding="utf-8")
                 self.assertEqual(up.main(["--check", "--readme", str(readme)]), 1)
 
     def test_dry_run_does_not_write(self) -> None:
@@ -876,8 +965,8 @@ class MainFlowTests(unittest.TestCase):
             ), contextlib.redirect_stdout(output):
                 self.assertEqual(up.main(["--dry-run", "--readme", str(readme)]), 0)
             self.assertEqual(readme.read_text(encoding="utf-8"), before)
-            self.assertIn("A verified sample repository.", output.getvalue())
-            self.assertFalse((Path(directory) / "assets" / "commit-activity.svg").exists())
+            self.assertIn("Featured engineering projects: sample-repo", output.getvalue())
+            self.assertFalse((Path(directory) / "assets").exists())
 
     def test_missing_readme_fails_safely(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

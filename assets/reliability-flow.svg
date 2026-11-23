@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="reliability-title reliability-desc">
+  <title id="reliability-title">Webhook reliability model</title>
+  <desc id="reliability-desc">A webhook flow: authenticate, acknowledge quickly, normalize with a tracking identifier, process idempotently, then deliver downstream. Transient failures move through three retry attempts to a dead-letter queue and a replay API.</desc>
+  <defs>
+    <linearGradient id="rel-accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="0.55" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+    <radialGradient id="rel-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#3B82F6" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#3B82F6" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="rel-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1F2937" stroke-width="1" opacity="0.38"/>
+    </pattern>
+    <marker id="rel-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#475569"/>
+    </marker>
+    <marker id="rel-arrow-cyan" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#22D3EE"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="420" fill="#0B0F19"/>
+  <rect width="1200" height="420" fill="url(#rel-grid)"/>
+  <ellipse cx="980" cy="20" rx="320" ry="190" fill="url(#rel-glow)"/>
+  <rect x="0" y="0" width="1200" height="3" fill="url(#rel-accent)"/>
+
+  <text x="60" y="50" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" letter-spacing="2.4" fill="#C4B5FD">FAILURE HANDLING</text>
+  <text x="60" y="84" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="30" font-weight="600" fill="#F8FAFC">Webhook reliability model</text>
+  <text x="60" y="108" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="13" fill="#94A3B8">Ingest fast, process asynchronously, recover deterministically.</text>
+  <text x="1140" y="50" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" letter-spacing="1.6" fill="#64748B">FAST ACK / SAFE RETRY</text>
+
+  <!-- Happy path -->
+  <g>
+    <rect x="60" y="150" width="160" height="68" rx="10" fill="#111827" stroke="#8B5CF6" stroke-opacity="0.55"/>
+    <rect x="60" y="150" width="160" height="2" rx="1" fill="#8B5CF6" opacity="0.8"/>
+    <text x="76" y="178" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F8FAFC">GHL event</text>
+    <text x="76" y="197" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#94A3B8">workflow payload</text>
+  </g>
+  <g>
+    <rect x="244" y="150" width="160" height="68" rx="10" fill="#111827" stroke="#8B5CF6" stroke-opacity="0.55"/>
+    <text x="260" y="178" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F8FAFC">Authenticate</text>
+    <text x="260" y="197" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#94A3B8">x-ghl-signature</text>
+  </g>
+  <g>
+    <rect x="428" y="150" width="160" height="68" rx="10" fill="#111827" stroke="#8B5CF6" stroke-opacity="0.55"/>
+    <text x="444" y="178" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F8FAFC">ACK 200</text>
+    <text x="444" y="197" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#94A3B8">&lt; 5 ms response</text>
+  </g>
+  <g>
+    <rect x="612" y="150" width="160" height="68" rx="10" fill="#111827" stroke="#3B82F6" stroke-opacity="0.55"/>
+    <text x="628" y="178" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F8FAFC">Normalize</text>
+    <text x="628" y="197" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#94A3B8">trackingId</text>
+  </g>
+  <g>
+    <rect x="796" y="150" width="160" height="68" rx="10" fill="#111827" stroke="#3B82F6" stroke-opacity="0.55"/>
+    <text x="812" y="178" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F8FAFC">Process</text>
+    <text x="812" y="197" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#94A3B8">idempotent handler</text>
+  </g>
+  <g>
+    <rect x="980" y="150" width="160" height="68" rx="10" fill="#111827" stroke="#22D3EE" stroke-opacity="0.55"/>
+    <text x="996" y="178" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F8FAFC">Downstream</text>
+    <text x="996" y="197" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#94A3B8">CRM + data sinks</text>
+  </g>
+
+  <line x1="220" y1="184" x2="240" y2="184" stroke="#475569" stroke-width="1.5" marker-end="url(#rel-arrow)"/>
+  <line x1="404" y1="184" x2="424" y2="184" stroke="#475569" stroke-width="1.5" marker-end="url(#rel-arrow)"/>
+  <line x1="588" y1="184" x2="608" y2="184" stroke="#475569" stroke-width="1.5" marker-end="url(#rel-arrow)"/>
+  <line x1="772" y1="184" x2="792" y2="184" stroke="#475569" stroke-width="1.5" marker-end="url(#rel-arrow)"/>
+  <line x1="956" y1="184" x2="976" y2="184" stroke="#475569" stroke-width="1.5" marker-end="url(#rel-arrow)"/>
+
+  <!-- Failure path -->
+  <path d="M876 218 L876 254 L390 254 L390 282" fill="none" stroke="#22D3EE" stroke-width="1.4" stroke-dasharray="5 5" marker-end="url(#rel-arrow-cyan)"/>
+
+  <g>
+    <rect x="300" y="286" width="180" height="64" rx="10" fill="#111827" stroke="#22D3EE" stroke-opacity="0.5"/>
+    <rect x="300" y="286" width="180" height="2" rx="1" fill="#22D3EE" opacity="0.7"/>
+    <text x="316" y="312" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F8FAFC">Transient failure</text>
+    <text x="316" y="330" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#94A3B8">5xx · timeout</text>
+  </g>
+  <g>
+    <rect x="520" y="286" width="180" height="64" rx="10" fill="#111827" stroke="#22D3EE" stroke-opacity="0.5"/>
+    <text x="536" y="312" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F8FAFC">Retry + backoff</text>
+    <text x="536" y="330" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#94A3B8">3 attempts</text>
+  </g>
+  <g>
+    <rect x="740" y="286" width="180" height="64" rx="10" fill="#111827" stroke="#22D3EE" stroke-opacity="0.5"/>
+    <text x="756" y="312" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F8FAFC">Dead-letter queue</text>
+    <text x="756" y="330" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#94A3B8">durable failure record</text>
+  </g>
+  <g>
+    <rect x="960" y="286" width="180" height="64" rx="10" fill="#111827" stroke="#22D3EE" stroke-opacity="0.5"/>
+    <text x="976" y="312" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#F8FAFC">Replay API</text>
+    <text x="976" y="330" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="10" fill="#94A3B8">safe reprocess</text>
+  </g>
+
+  <line x1="480" y1="318" x2="516" y2="318" stroke="#22D3EE" stroke-width="1.4" marker-end="url(#rel-arrow-cyan)"/>
+  <line x1="700" y1="318" x2="736" y2="318" stroke="#22D3EE" stroke-width="1.4" marker-end="url(#rel-arrow-cyan)"/>
+  <line x1="920" y1="318" x2="956" y2="318" stroke="#22D3EE" stroke-width="1.4" marker-end="url(#rel-arrow-cyan)"/>
+
+  <text x="60" y="386" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif" font-size="11" fill="#94A3B8">Retries are safe because event identity is checked before processing. Failures that exhaust retries remain recoverable.</text>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9" fill="#64748B">
+    <line x1="900" y1="382" x2="930" y2="382" stroke="#475569" stroke-width="1.5"/>
+    <text x="938" y="385">HAPPY PATH</text>
+    <line x1="1020" y1="382" x2="1050" y2="382" stroke="#22D3EE" stroke-width="1.4" stroke-dasharray="5 5"/>
+    <text x="1058" y="385">FAILURE PATH</text>
+  </g>
+</svg>
