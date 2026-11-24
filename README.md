@@ -62,17 +62,17 @@ I optimize for systems that can be operated, not just demonstrated.
 
 ![Featured engineering projects: ghl-snapshot-validator, ghl-webhook-processor., ghl-data-migration-tool, ghl-lead-scoring-service](assets/featured-projects.svg?v=84155352)
 
-[ghl-snapshot-validator](https://github.com/faseehabdullah57-blip/ghl-snapshot-validator) · [ghl-webhook-processor.](https://github.com/faseehabdullah57-blip/ghl-webhook-processor.) · [ghl-data-migration-tool](https://github.com/faseehabdullah57-blip/ghl-data-migration-tool) · [ghl-lead-scoring-service](https://github.com/faseehabdullah57-blip/ghl-lead-scoring-service)
+[ghl-snapshot-validator](https://github.com/faseehabdullahdev/ghl-snapshot-validator) · [ghl-webhook-processor.](https://github.com/faseehabdullahdev/ghl-webhook-processor.) · [ghl-data-migration-tool](https://github.com/faseehabdullahdev/ghl-data-migration-tool) · [ghl-lead-scoring-service](https://github.com/faseehabdullahdev/ghl-lead-scoring-service)
 
 _Ranking: recency, stars/forks, description, tests, CI, Docker, releases, documentation, and repository size. Ties break by stars, then most recent push._
 
 <details>
 <summary>Project details</summary>
 
-- **[ghl-snapshot-validator](https://github.com/faseehabdullah57-blip/ghl-snapshot-validator)** — A CLI that audits GoHighLevel sub-account configuration against a canonical blueprint, detects drift across fields, pipelines, and workflows, and can auto-fix missing resources.
-- **[ghl-webhook-processor.](https://github.com/faseehabdullah57-blip/ghl-webhook-processor.)** — An Express service that authenticates and normalizes GoHighLevel webhooks, acknowledges fast, then forwards events with retries, a dead-letter queue, and replay support.
-- **[ghl-data-migration-tool](https://github.com/faseehabdullah57-blip/ghl-data-migration-tool)** — A config-driven migration pipeline that maps legacy CSV exports, validates contacts, opportunities, and notes, and loads them into GoHighLevel API v2 with row-level error reports.
-- **[ghl-lead-scoring-service](https://github.com/faseehabdullah57-blip/ghl-lead-scoring-service)** — A serverless, event-driven lead scoring engine with configurable rules, inactivity decay, webhook idempotency, and speed-to-lead task creation.
+- **[ghl-snapshot-validator](https://github.com/faseehabdullahdev/ghl-snapshot-validator)** — A CLI that audits GoHighLevel sub-account configuration against a canonical blueprint, detects drift across fields, pipelines, and workflows, and can auto-fix missing resources.
+- **[ghl-webhook-processor.](https://github.com/faseehabdullahdev/ghl-webhook-processor.)** — An Express service that authenticates and normalizes GoHighLevel webhooks, acknowledges fast, then forwards events with retries, a dead-letter queue, and replay support.
+- **[ghl-data-migration-tool](https://github.com/faseehabdullahdev/ghl-data-migration-tool)** — A config-driven migration pipeline that maps legacy CSV exports, validates contacts, opportunities, and notes, and loads them into GoHighLevel API v2 with row-level error reports.
+- **[ghl-lead-scoring-service](https://github.com/faseehabdullahdev/ghl-lead-scoring-service)** — A serverless, event-driven lead scoring engine with configurable rules, inactivity decay, webhook idempotency, and speed-to-lead task creation.
 
 </details>
 
@@ -85,10 +85,10 @@ _Ranking: recency, stars/forks, description, tests, CI, Docker, releases, docume
 
 | Repository | Focus | Stack | Updated |
 | :--- | :--- | :--- | :--- |
-| [leadflow-crm](https://github.com/faseehabdullah57-blip/leadflow-crm) | A FastAPI foundation for an AI-assisted CRM: API scaffolding for lead capture, qualification, and follow-up workflows. Early-stage. | Python | 2026-11-10 |
-| [pddg-cybersecurity](https://github.com/faseehabdullah57-blip/pddg-cybersecurity) | A TypeScript content and site build for Pinnacle Digital Defense Group, a cybersecurity services brand. | TypeScript | 2026-07-16 |
-| [Ai-checker](https://github.com/faseehabdullah57-blip/Ai-checker) | A static HTML/CSS/JavaScript portfolio site for Faseeh Digital's SEO, social media, and advertising services. | HTML | 2026-03-31 |
-| [fadigital.github.io](https://github.com/faseehabdullah57-blip/fadigital.github.io) | A single-page GitHub Pages site for Faseeh Digital's services. | HTML | 2025-08-21 |
+| [leadflow-crm](https://github.com/faseehabdullahdev/leadflow-crm) | A FastAPI foundation for an AI-assisted CRM: API scaffolding for lead capture, qualification, and follow-up workflows. Early-stage. | Python | 2026-11-10 |
+| [pddg-cybersecurity](https://github.com/faseehabdullahdev/pddg-cybersecurity) | A TypeScript content and site build for Pinnacle Digital Defense Group, a cybersecurity services brand. | TypeScript | 2026-07-16 |
+| [Ai-checker](https://github.com/faseehabdullahdev/Ai-checker) | A static HTML/CSS/JavaScript portfolio site for Faseeh Digital's SEO, social media, and advertising services. | HTML | 2026-03-31 |
+| [fadigital.github.io](https://github.com/faseehabdullahdev/fadigital.github.io) | A single-page GitHub Pages site for Faseeh Digital's services. | HTML | 2025-08-21 |
 
 <!-- project-index:end -->
 
@@ -130,12 +130,12 @@ row is malformed, or a client's configuration silently changes.
 
 <!-- recent-activity:start -->
 
-- **2026-11-13** · [ghl-snapshot-validator](https://github.com/faseehabdullah57-blip/ghl-snapshot-validator) · Complete GoHighLevel snapshot configuration validator CLI with multi-location batch audit and auto-fix ([`0d3437f`](https://github.com/faseehabdullah57-blip/ghl-snapshot-validator/commit/0d3437fea73a6f74e566fe5d709c49df64d97e8d))
-- **2026-11-13** · [ghl-lead-scoring-service](https://github.com/faseehabdullah57-blip/ghl-lead-scoring-service) · feat: add inactivity time-decay, webhook idempotency, and speed-to-lead task creation ([`4263aaa`](https://github.com/faseehabdullah57-blip/ghl-lead-scoring-service/commit/4263aaabe4786719f9240ca9ba1e6b114c7349d4))
-- **2026-11-13** · [ghl-lead-scoring-service](https://github.com/faseehabdullah57-blip/ghl-lead-scoring-service) · Complete GoHighLevel serverless lead scoring microservice ([`3b41206`](https://github.com/faseehabdullah57-blip/ghl-lead-scoring-service/commit/3b412060d8289a8f310531d8a09df4ea0ce3d299))
-- **2026-11-13** · [ghl-webhook-processor.](https://github.com/faseehabdullah57-blip/ghl-webhook-processor.) · Complete GoHighLevel webhook processor with DLQ, replay API, and Docker ([`afe4be2`](https://github.com/faseehabdullah57-blip/ghl-webhook-processor./commit/afe4be20a610dfdd17c2de4fb31192529dff79c0))
-- **2026-11-13** · [ghl-data-migration-tool](https://github.com/faseehabdullah57-blip/ghl-data-migration-tool) · feat: add Opportunities & Notes migration, PII gitignore rules, and Docker support ([`af12149`](https://github.com/faseehabdullah57-blip/ghl-data-migration-tool/commit/af121497509199007f31b32be56a688d4ccb38f6))
-- **2026-11-13** · [ghl-webhook-processor.](https://github.com/faseehabdullah57-blip/ghl-webhook-processor.) · feat: add Dead-Letter Queue, admin replay API, failure alerts, bi-directional GHL sync, and Docker ([`363bcb3`](https://github.com/faseehabdullah57-blip/ghl-webhook-processor./commit/363bcb320d0b15b790e3b97753bcdbdb64384a9b))
+- **2026-11-13** · [ghl-snapshot-validator](https://github.com/faseehabdullahdev/ghl-snapshot-validator) · Complete GoHighLevel snapshot configuration validator CLI with multi-location batch audit and auto-fix ([`0d3437f`](https://github.com/faseehabdullahdev/ghl-snapshot-validator/commit/0d3437fea73a6f74e566fe5d709c49df64d97e8d))
+- **2026-11-13** · [ghl-lead-scoring-service](https://github.com/faseehabdullahdev/ghl-lead-scoring-service) · feat: add inactivity time-decay, webhook idempotency, and speed-to-lead task creation ([`4263aaa`](https://github.com/faseehabdullahdev/ghl-lead-scoring-service/commit/4263aaabe4786719f9240ca9ba1e6b114c7349d4))
+- **2026-11-13** · [ghl-lead-scoring-service](https://github.com/faseehabdullahdev/ghl-lead-scoring-service) · Complete GoHighLevel serverless lead scoring microservice ([`3b41206`](https://github.com/faseehabdullahdev/ghl-lead-scoring-service/commit/3b412060d8289a8f310531d8a09df4ea0ce3d299))
+- **2026-11-13** · [ghl-webhook-processor.](https://github.com/faseehabdullahdev/ghl-webhook-processor.) · Complete GoHighLevel webhook processor with DLQ, replay API, and Docker ([`afe4be2`](https://github.com/faseehabdullahdev/ghl-webhook-processor./commit/afe4be20a610dfdd17c2de4fb31192529dff79c0))
+- **2026-11-13** · [ghl-data-migration-tool](https://github.com/faseehabdullahdev/ghl-data-migration-tool) · feat: add Opportunities & Notes migration, PII gitignore rules, and Docker support ([`af12149`](https://github.com/faseehabdullahdev/ghl-data-migration-tool/commit/af121497509199007f31b32be56a688d4ccb38f6))
+- **2026-11-13** · [ghl-webhook-processor.](https://github.com/faseehabdullahdev/ghl-webhook-processor.) · feat: add Dead-Letter Queue, admin replay API, failure alerts, bi-directional GHL sync, and Docker ([`363bcb3`](https://github.com/faseehabdullahdev/ghl-webhook-processor./commit/363bcb320d0b15b790e3b97753bcdbdb64384a9b))
 
 <!-- recent-activity:end -->
 
@@ -182,9 +182,9 @@ _Excludes this profile repository. Signals are derived from default branches._
 
 <!-- commit-activity:start -->
 
-![Public commit activity over the last 12 weeks](assets/commit-activity.svg?v=52a73f75)
+![Public commit activity over the last 12 weeks](assets/commit-activity.svg?v=a358deb2)
 
-_Public commits on default branches, 2026-09-06 through 2026-11-23 (8 commits; source: repository statistics)._
+_Public commits on default branches, 2026-09-06 through 2026-11-24 (8 commits; source: repository statistics)._
 
 <!-- commit-activity:end -->
 
